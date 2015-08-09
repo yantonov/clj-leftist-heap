@@ -11,12 +11,12 @@
      :else 0)))
 
 (test/deftest empty-heap
-  (let [h (lh/->EmptyLeftistHeap test-min-comparer)]
+  (let [h (lh/createEmptyHeap test-min-comparer)]
     (test/is (true? (heap-empty? h)))
     (test/is (zero? (heap-rank h)))))
 
 (test/deftest add-to-empty-heap
-  (let [h (heap-insert (lh/->EmptyLeftistHeap test-min-comparer) 123 456)
+  (let [h (heap-insert (lh/createEmptyHeap test-min-comparer) 123 456)
         m (heap-get-min h)
         e (heap-extract-min h)]
     (test/is (= [123 456] m))
@@ -33,7 +33,7 @@
 (defn multiple-insert-test-helper [elements]
   (let [sorted-elements (vec (sort elements))
         heap (reduce #(heap-insert %1 %2 :value)
-                     (lh/->EmptyLeftistHeap test-min-comparer)
+                     (lh/createEmptyHeap test-min-comparer)
                      elements)
         from-heap (extract-all heap)
         only-priorities (vec (map #(heap-item-priority heap %) from-heap))]

@@ -3,36 +3,12 @@
 
 (deftype LeftistHeap [key value rank left right comparer])
 
-(deftype EmptyLeftistHeap [comparer]
-  HeapWithRank
-  (heap-rank [this] 0)
-  
-  MergeableHeap
-  (heap-empty? [this] true)
-  
-  (heap-get-min [this]
-    (throw (RuntimeException. "Cant retrieve element from empty heap.")))
-  
-  (heap-merge [this other-heap] other-heap)
-  
-  (heap-insert [this key value]
-    (->LeftistHeap key value 1 this this comparer))
-  
-  (heap-extract-min [this]
-    (throw (RuntimeException. "Cant retrieve element from empty heap.")))
-  
-  (heap-item-priority [this heap-item]
-    (first heap-item))
-  
-  (heap-item-value [this heap-item]
-    (second heap-item)))
-
 (extend-type LeftistHeap
   HeapWithRank
   (heap-rank [this] (.rank this))
 
   MergeableHeap
-  (heap-empty? [this] false)
+  (heap-empty? [this] (= 0 (.rank this)))
 
   (heap-get-min [this] [(.key this)
                         (.value this)])
@@ -52,7 +28,7 @@
              other-m (heap-get-min other-heap)
              other-p (heap-item-priority this other-m)
              cmp (.comparer this)]
-         (if (< (cmp this-p other-p) 0)           
+         (if (< (cmp this-p other-p) 0)
            (ensure-leftist-property (.key this)
                                     (.value this)
                                     (.left this)
@@ -65,13 +41,14 @@
                                     cmp))))))
 
   (heap-insert [this key value]
-    (let [cmp (.comparer this)]
+    (let [cmp (.comparer this)
+          emptyHeap (->LeftistHeap nil nil 0 nil nil cmp)]
       (heap-merge this
                   (->LeftistHeap key
                                  value
                                  1
-                                 (->EmptyLeftistHeap cmp)
-                                 (->EmptyLeftistHeap cmp)
+                                 emptyHeap
+                                 emptyHeap
                                  cmp))))
 
   (heap-extract-min [this]
@@ -83,3 +60,6 @@
 
   (heap-item-value [this heap-item]
     (second heap-item)))
+
+(defn createEmptyHeap [comparer]
+  (->LeftistHeap nil nil 0 nil nil comparer))
