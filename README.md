@@ -4,7 +4,7 @@ In computer science, a leftist tree or leftist heap is a priority queue implemen
 
 This data structure allow you to extract minimal element, insert element with o(log(n)) speed like usual binary heap but also to merge two heaps in o(log(n)) time.
 
-This repository contains pure functional implementation of leftist heap in clojure.
+This repository contains purely functional implementation of leftist heap in clojure.
 
 ## License
 
