@@ -15,30 +15,30 @@
 
   (heap-merge [this other-heap]
     (cond
-     (heap-empty? this) other-heap
-     (heap-empty? other-heap) this
-     :else
-     (letfn [(ensure-leftist-property [key value left-heap right-heap comparer]
-               (let [left-rank (heap-rank left-heap)
-                     right-rank (heap-rank right-heap)]
-                 (if (>= right-rank left-rank)
-                   (->LeftistHeap key value (inc left-rank) right-heap left-heap comparer)
-                   (->LeftistHeap key value (inc right-rank) left-heap right-heap comparer))))]
-       (let [this-p (.key this)
-             other-min (heap-get-min other-heap)
-             other-p (heap-item-priority other-heap other-min)
-             cmp (.comparer this)]
-         (if (< (cmp this-p other-p) 0)
-           (ensure-leftist-property this-p
-                                    (.value this)
-                                    (.left this)
-                                    (heap-merge (.right this) other-heap)
-                                    cmp)
-           (ensure-leftist-property other-p
-                                    (heap-item-value other-heap other-min)
-                                    (.left other-heap)
-                                    (heap-merge this (.right other-heap))
-                                    cmp))))))
+      (heap-empty? this) other-heap
+      (heap-empty? other-heap) this
+      :else
+      (letfn [(ensure-leftist-property [key value left-heap right-heap comparer]
+                (let [left-rank (heap-rank left-heap)
+                      right-rank (heap-rank right-heap)]
+                  (if (>= right-rank left-rank)
+                    (->LeftistHeap key value (inc left-rank) right-heap left-heap comparer)
+                    (->LeftistHeap key value (inc right-rank) left-heap right-heap comparer))))]
+        (let [this-p (.key this)
+              other-min (heap-get-min other-heap)
+              other-p (heap-item-priority other-heap other-min)
+              cmp (.comparer this)]
+          (if (< (cmp this-p other-p) 0)
+            (ensure-leftist-property this-p
+                                     (.value this)
+                                     (.left this)
+                                     (heap-merge (.right this) other-heap)
+                                     cmp)
+            (ensure-leftist-property other-p
+                                     (heap-item-value other-heap other-min)
+                                     (.left other-heap)
+                                     (heap-merge this (.right other-heap))
+                                     cmp))))))
 
   (heap-insert [this key value]
     (let [cmp (.comparer this)

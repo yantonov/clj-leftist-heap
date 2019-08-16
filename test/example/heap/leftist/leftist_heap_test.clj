@@ -6,9 +6,9 @@
 (defn test-min-comparer [x y]
   (let [cmp (- x y)]
     (cond
-     (< cmp 0) -1
-     (> cmp 0) 1
-     :else 0)))
+      (< cmp 0) -1
+      (> cmp 0) 1
+      :else 0)))
 
 (test/deftest empty-heap
   (let [h (lh/createEmptyHeap test-min-comparer)]
