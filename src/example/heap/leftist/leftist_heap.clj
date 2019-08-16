@@ -8,7 +8,7 @@
   (heap-rank [this] (.rank this))
 
   MergeableHeap
-  (heap-empty? [this] (= 0 (.rank this)))
+  (heap-empty? [this] (zero? (.rank this)))
 
   (heap-get-min [this] [(.key this)
                         (.value this)])
@@ -28,7 +28,7 @@
               other-min (heap-get-min other-heap)
               other-p (heap-item-priority other-heap other-min)
               cmp (.comparer this)]
-          (if (< (cmp this-p other-p) 0)
+          (if (neg? (cmp this-p other-p))
             (ensure-leftist-property this-p
                                      (.value this)
                                      (.left this)
