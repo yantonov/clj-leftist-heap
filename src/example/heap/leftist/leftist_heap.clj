@@ -18,24 +18,24 @@
      (heap-empty? this) other-heap
      (heap-empty? other-heap) this
      :else
-     (letfn [(ensure-leftist-property [key value heap1 heap2 comparer]
-               (let [r1 (heap-rank heap1)
-                     r2 (heap-rank heap2)]
-                 (if (>= r2 r1)
-                   (->LeftistHeap key value (inc r1) heap2 heap1 comparer)
-                   (->LeftistHeap key value (inc r2) heap1 heap2 comparer))))]
+     (letfn [(ensure-leftist-property [key value left-heap right-heap comparer]
+               (let [left-rank (heap-rank left-heap)
+                     right-rank (heap-rank right-heap)]
+                 (if (>= right-rank left-rank)
+                   (->LeftistHeap key value (inc left-rank) right-heap left-heap comparer)
+                   (->LeftistHeap key value (inc right-rank) left-heap right-heap comparer))))]
        (let [this-p (.key this)
-             other-m (heap-get-min other-heap)
-             other-p (heap-item-priority this other-m)
+             other-min (heap-get-min other-heap)
+             other-p (heap-item-priority other-heap other-min)
              cmp (.comparer this)]
          (if (< (cmp this-p other-p) 0)
-           (ensure-leftist-property (.key this)
+           (ensure-leftist-property this-p
                                     (.value this)
                                     (.left this)
                                     (heap-merge (.right this) other-heap)
                                     cmp)
            (ensure-leftist-property other-p
-                                    (heap-item-value this other-m)
+                                    (heap-item-value other-heap other-min)
                                     (.left other-heap)
                                     (heap-merge this (.right other-heap))
                                     cmp))))))
@@ -55,10 +55,10 @@
     (heap-merge (.left this)
                 (.right this)))
 
-  (heap-item-priority [this heap-item]
+  (heap-item-priority [_ heap-item]
     (first heap-item))
 
-  (heap-item-value [this heap-item]
+  (heap-item-value [_ heap-item]
     (second heap-item)))
 
 (defn createEmptyHeap [comparer]
